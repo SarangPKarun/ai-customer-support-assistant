@@ -1,12 +1,25 @@
 import { useState } from "react"
+import { auth } from "../components/firebase"
+import { signInWithEmailAndPassword } from "firebase/auth"
+import { toast } from "react-toastify"
 
 const Login = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault()
-        console.log(email, password)
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            // const user = auth.currentUser;
+            // console.log(user);
+            console.log("User logged in successfully")
+            window.location.href = "/chat"
+            toast.success("User logged in successfully", { position: "top-center" })
+        } catch (error) {
+            console.log(error.message)
+            toast.error(error.message, { position: "bottom-center" })
+        }
     }
 
     return (

@@ -1,6 +1,8 @@
 import { useState } from "react"
-import { auth } from "../firebase";
+import { auth, db } from "../components/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { setDoc, doc } from "firebase/firestore"
+import { toast } from "react-toastify";
 
 const Register = () => {
     const [name, setName] = useState('');
@@ -18,10 +20,19 @@ const Register = () => {
             await createUserWithEmailAndPassword(auth, email, password);
             const user = auth.currentUser;
             // console.log(name, email, password, confirmPassword);
-            console.log(user);
+            // console.log(user);
+            if (user) {
+                await setDoc(doc(db, "users", user.uid), {
+                    name: name,
+                    email: user.email,
+                    createdAt: new Date(),
+                });
+            }
             console.log('User registered successfully');
+            toast.success("User registered successfully", { position: "top-center" })
         } catch (error) {
             console.log(error.message);
+            toast.error(error.message, { position: "bottom-center" })
         }
     };
 
